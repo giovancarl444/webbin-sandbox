@@ -1,0 +1,6 @@
+http://localhost:8080/index.html
+http://localhost:8080/markets.html
+http://localhost:8080/products.html
+http://localhost:8080/about.html
+http://localhost:8080/contact.html
+http://localhost:8080/blog/why-custody-matters.html
