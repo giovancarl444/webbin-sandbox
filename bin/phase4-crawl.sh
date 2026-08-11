@@ -34,9 +34,14 @@ awk -F'\t' -v assets="$ASSET_RE" -v cdn="${EXTRA_HOSTS:-}" '
   END { printf "  classified: %d asset, %d navigation, %d cdn, %d api\n", a, d, x, k }
 ' routes.txt .audit-raw/har-requests.tsv
 
-{ cat /tmp/.api 2>/dev/null
+{ cat /tmp/.api 2>/dev/null || true
   # WebSockets never appear in HAR, but a price feed is part of the surface.
-  [ -s .audit-raw/websockets.txt ] && cut -f2 .audit-raw/websockets.txt | sed 's/^/WS /'
+  # `if` rather than `&&`: as the last statement in the group, a false `&&`
+  # returns 1 and pipefail kills the phase on a site that simply has no
+  # WebSocket. Absence must cost nothing.
+  if [ -s .audit-raw/websockets.txt ]; then
+    cut -f2 .audit-raw/websockets.txt | sed 's/^/WS /'
+  fi
 } | sort -u > api-surface.txt
 rm -f /tmp/.api
 
@@ -50,7 +55,14 @@ total=$(wc -l < .audit-raw/har-requests.tsv)
 # --- gates ------------------------------------------------------------------
 [ "$html" -eq "$routes" ] || { echo "GATE FAIL: rendered html $html != routes $routes" >&2; exit 3; }
 [ "$har" -eq "$routes" ] || { echo "GATE FAIL: har count $har != routes $routes" >&2; exit 3; }
-[ -s api-surface.txt ] || { echo "GATE FAIL: api-surface.txt is empty" >&2; exit 3; }
+# An empty API surface is a legitimate result for a fully static or SSG site,
+# not a failure. It becomes a failure only if requests went unclassified, which
+# is checked above. Report it so nobody reads silence as coverage.
+if [ ! -s api-surface.txt ]; then
+  echo "  NOTE: zero dynamic endpoints observed. Valid for a static/SSG build."
+  echo "        For an imported system, cross-check against source-derived handlers"
+  echo "        (bin/import-routes.sh) -- the browser only calls what a page triggers."
+fi
 if grep -qEi '\.(js|css|png|jpe?g|svg|woff2?)(\?|$)' api-surface.txt; then
   echo "GATE FAIL: static assets leaked into api-surface.txt" >&2; exit 3
 fi

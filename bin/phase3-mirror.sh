@@ -10,9 +10,13 @@ log_phase "Phase 3: static mirror of $TARGET_URL"
 # Report what the site actually uses before rejecting, so the pattern is
 # justified by evidence rather than assumed from a template.
 echo "  observed query parameters on discovered pages:"
-{ cat .audit-raw/routes.all 2>/dev/null
-  while read -r u; do audit_get "$u" || true; done < <(head -3 routes.txt)
-} | grep -oE '[?&][a-zA-Z_.][a-zA-Z0-9_.]*=' | tr -d '?&=' | sort | uniq -c | sort -rn | head -12 | sed 's/^/    /'
+# `|| true` inside the pipeline: a site with no query parameters at all makes
+# grep exit 1, which under pipefail killed this phase outright. Plenty of real
+# sites have none -- absence is a normal result, not an error.
+{ { cat .audit-raw/routes.all 2>/dev/null || true
+    while read -r u; do audit_get "$u" || true; done < <(head -3 routes.txt)
+  } | { grep -oE '[?&][a-zA-Z_.][a-zA-Z0-9_.]*=' || true; } \
+    | tr -d '?&=' | sort | uniq -c | sort -rn | head -12 | sed 's/^/    /'; } || true
 
 # Note the two alternations. Namespaced params (filter.asset, filter.price)
 # must match on the prefix alone -- requiring '=' immediately after "filter."

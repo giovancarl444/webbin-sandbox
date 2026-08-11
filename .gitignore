@@ -27,3 +27,4 @@ fixture/site/assets/config.gen.js
 
 node_modules/
 .DS_Store
+imports/
