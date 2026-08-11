@@ -22,11 +22,14 @@ npx --no-install retire --path ./mirror-raw --outputformat json \
              $c, $v,
              # identifiers.CVE is an array but .issue is a bare string, so
              # normalise to an array before joining rather than assuming shape.
-             ((.identifiers.CVE // .identifiers.githubID // .identifiers.issue
-               // .identifiers.summary // "-")
+             # Prefer a CVE, then a GHSA, then the human summary. A bare
+             # tracker number identifies nothing to a reader.
+             ((.identifiers.CVE // .identifiers.githubID // .identifiers.summary
+               // .identifiers.issue // "-")
               | (if type == "array" then . else [.] end) | join(", ") | .[0:80]),
              $f ] | @tsv' findings/retire.json 2>/dev/null \
-    | sort -u | awk -F'\t' '{ printf "| %s | %s | %s | %s | `%s` |\n", toupper($1), $2, $3, $4, $5 }'
+    | sort -u \
+    | awk -F'\t' -v root="$PWD/" '{ sub(root, "", $5); printf "| %s | %s | %s | %s | `%s` |\n", toupper($1), $2, $3, $4, $5 }'
 } > findings/dependencies.md
 
 n=$(grep -c '^| ' findings/dependencies.md || true); n=$((n > 0 ? n - 1 : 0))

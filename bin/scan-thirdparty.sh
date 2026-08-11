@@ -10,7 +10,7 @@ mkdir -p findings
   echo
   echo "Origins the site loaded during the rendered crawl, by request count."
   echo
-  echo "| Requests | Origin | First-party? | Blocking script |"
+  echo "| Requests | Origin | Declared host? | Blocking script |"
   echo "|---|---|---|---|"
 } > findings/third-party.md
 

@@ -2,7 +2,7 @@
 
 Origins the site loaded during the rendered crawl, by request count.
 
-| Requests | Origin | First-party? | Blocking script |
+| Requests | Origin | Declared host? | Blocking script |
 |---|---|---|---|
 | 33 | `http://localhost:8080` | yes | no |
 | 1 | `http://127.0.0.1:8081` | yes | **yes** |
