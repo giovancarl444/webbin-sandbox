@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Flat sitemap, no <sitemapindex>. The main fixture only exercises the
+     nested path, so this covers the non-nested branch of route discovery. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost:8082/index.html</loc></url>
+  <url><loc>http://localhost:8082/page-a.html</loc></url>
+  <url><loc>http://localhost:8082/page-b.html</loc></url>
+</urlset>

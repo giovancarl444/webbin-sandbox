@@ -2,7 +2,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-for name in site cdn; do
+for name in site cdn bare; do
   pidfile=".audit-raw/$name.pid"
   [ -f "$pidfile" ] || continue
   pid="$(cat "$pidfile")"

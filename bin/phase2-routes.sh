@@ -28,11 +28,22 @@ EOF
   exit 3
 fi
 
-# Extract <loc> values. A <sitemapindex> means one more level to expand.
-locs() { tr '>' '>\n' < "$1" | sed -nE 's#.*<loc[^>]*>[[:space:]]*([^<[:space:]]+).*#\1#p' | tr -d '\r'; }
+# Comments must be stripped before deciding what kind of sitemap this is.
+# Matching '<sitemapindex' anywhere in the raw bytes treats a flat sitemap that
+# merely *mentions* the word in a comment as an index, and then fetches each
+# page as though it were a child sitemap.
+nocomments() { python3 -c "import re,sys;print(re.sub(r'<!--.*?-->','',open(sys.argv[1],encoding='utf-8',errors='replace').read(),flags=re.S))" "$1"; }
+locs() { nocomments "$1" | tr '>' '>\n' | sed -nE 's#.*<loc[^>]*>[[:space:]]*([^<[:space:]]+).*#\1#p' | tr -d '\r'; }
+
+# urlset is checked first: a sitemapindex never contains one, so this settles
+# ambiguous files without depending on element ordering.
+kind=flat
+if ! nocomments sitemap.xml | grep -qi '<urlset'; then
+  nocomments sitemap.xml | grep -qi '<sitemapindex' && kind=index
+fi
 
 : > .audit-raw/routes.all
-if grep -qi '<sitemapindex' sitemap.xml; then
+if [ "$kind" = index ]; then
   mapfile -t children < <(locs sitemap.xml)
   echo "  nested sitemap index: ${#children[@]} child sitemaps"
   for child in "${children[@]}"; do
@@ -41,7 +52,7 @@ if grep -qi '<sitemapindex' sitemap.xml; then
     audit_get "$child" -o .audit-raw/child.xml || { echo "  WARN: unreachable $child"; continue; }
     n="$(locs .audit-raw/child.xml | tee -a .audit-raw/routes.all | wc -l)"
     echo "    $child -> $n urls"
-    if grep -qi '<sitemapindex' .audit-raw/child.xml; then
+    if nocomments .audit-raw/child.xml | grep -qi '<sitemapindex'; then
       echo "    NOTE: $child is itself an index -- nesting is deeper than one level, not expanded"
     fi
   done
@@ -52,7 +63,9 @@ fi
 
 # Drop faceted/paginated permutations and off-allowlist hosts, then dedupe
 # while preserving order.
-grep -vE '[?&](sort_by|filter\.|page|variant|utm_[a-z]+|gclid|fbclid|ref|q)=' .audit-raw/routes.all \
+# `|| true`: an empty or fully-filtered route list makes grep exit 1, and under
+# pipefail that aborts the phase before the gate can report the real problem.
+{ grep -vE '[?&](sort_by|filter\.|page|variant|utm_[a-z]+|gclid|fbclid|ref|q)=' .audit-raw/routes.all || true; } \
   | awk -v allow="$ALLOWED_HOSTS" '
       BEGIN { n = split(allow, a, ","); for (i=1;i<=n;i++) ok[a[i]] = 1 }
       { u = $0; sub(/^[a-z]+:\/\//, "", u); sub(/\/.*$/, "", u); if (u in ok && !seen[$0]++) print }

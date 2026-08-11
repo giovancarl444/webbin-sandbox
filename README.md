@@ -47,18 +47,40 @@ Against a real target, edit `audit.env` and run `./bin/run-audit.sh`.
 
 A failed gate stops the run. Later phases never build on a broken baseline.
 
-## Why the fixture exists
+## Regression: run this after any change
 
-`fixture/` is a two-origin site with defects planted on purpose and an answer
-key in `fixture/expected.tsv`. Without it, "the site is clean" and "the scanner
-silently broke" produce identical output.
+```bash
+./bin/verify-engine.sh      # both fixtures, ~20s
+```
 
-That is not hypothetical. Four scanners in this repo shipped a **passing gate on
-wrong output** during development — an api-surface filter on a HAR field
-Playwright does not emit, a reject-regex that leaked faceted URLs, a
+**Two fixtures, because one is not enough.**
+
+`fixture/site` is a two-origin site with 17 defects planted on purpose and an
+answer key in `fixture/expected.tsv`. Without it, "the site is clean" and "the
+scanner silently broke" produce identical output. Four scanners here shipped a
+**passing gate on wrong output** during development — an api-surface filter on a
+HAR field Playwright does not emit, a reject-regex that leaked faceted URLs, a
 colon-splitter that shredded `host:port` paths, and a word boundary that never
 matches inside `apiSecret`. Each was caught by the answer key, not by the gate.
-Run `bin/verify-fixture.sh` after any scanner change.
+
+`fixture/bare` has nothing to find. It exists because the positive fixture only
+ever tested **presence**, and five more bugs hid in **absence**: `grep` and `rg`
+exit 1 on no matches, and under `pipefail` that killed a phase on the most
+common real-world outcome — a site with no query parameters, no WebSocket, no
+API calls, no JavaScript, or a flat sitemap. Three of those broke on the first
+contact with a real client repo.
+
+## Importing a client system
+
+The engine also runs against a system reproduced **inside** the sandbox rather
+than a live origin, and can prove that copy matches production. See
+[IMPORT.md](IMPORT.md).
+
+```bash
+bin/import-system.sh <name> [git-url] [port]   # stand the system up
+bin/audit-import.sh  <name>                    # audit the copy
+bin/parity-check.sh  <name> <production-url>   # prove it matches production
+```
 
 ## Politeness
 

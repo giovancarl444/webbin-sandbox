@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bare fixture</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<h1>Bare fixture</h1>
+<p>Deliberately featureless. No JavaScript, no query parameters, no third-party
+origins, no API calls, no WebSocket, no secrets, no sourcemaps.</p>
+<p>The main fixture proves the detectors fire. This one proves the pipeline
+survives when there is nothing to find — the case that broke three phases
+against real systems, because <code>grep</code> and <code>rg</code> exit 1 on no
+matches and <code>pipefail</code> turned that into a dead phase.</p>
+<nav><a href="/page-a.html">A</a> <a href="/page-b.html">B</a></nav>
+</body>
+</html>

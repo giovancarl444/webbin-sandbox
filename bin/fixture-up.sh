@@ -49,6 +49,7 @@ start() { # port, dir, name
 echo "Starting fixture servers:"
 start 8080 fixture/site site
 start 8081 fixture/cdn cdn
+start 8082 fixture/bare bare   # negative case: a site with nothing to find
 
 for i in $(seq 1 25); do
   if curl -sf -o /dev/null --max-time 1 http://localhost:8080/index.html \

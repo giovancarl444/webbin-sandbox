@@ -85,6 +85,49 @@ else gets labelled, not asserted.
 what a freshly built Next.js template should look like. The 23 DOM-sink matches
 are minified React internals and are labelled as review leads, not findings.
 
+## Production parity
+
+`bin/parity-check.sh <name> <production-url>` mirrors the **same source-derived
+routes** against both the sandbox copy and the live origin, then joins the two
+asset manifests by path and by content hash.
+
+Two metrics, because one is misleading:
+
+- **Path parity** — same path, same bytes. Meaningful for static sites.
+- **Content parity** — what fraction of production's assets exist byte-identical
+  in the sandbox, *ignoring filenames*. Hashed-chunk builds (Next.js, Vite)
+  rename every asset per build, so path parity alone reports total mismatch even
+  when the shipped bytes are identical.
+
+Verified in both directions on two origins built from identical source:
+
+| | Identical source | After introducing drift |
+|---|---|---|
+| Same path, identical bytes | 11 | 9 |
+| Same path, different bytes | 0 | **1** (the modified bundle, named) |
+| Missing from sandbox | 0 | **1** (the deleted page, named) |
+| **Content parity** | **100%** | **81%** |
+
+A parity checker that always reports a match is worthless, so the drift case is
+part of the test, not an afterthought.
+
+The report ends with what the result licenses us to claim. At ≥95% content
+parity with nothing missing, bundle-level findings — secrets, sourcemaps,
+vulnerable dependencies, DOM sinks — transfer to production, because the bytes
+analysed are the bytes production serves. Below that, they are sandbox-only
+until parity improves. Header, TLS and CDN findings never come from this
+comparison at all; they belong to the client's edge.
+
+One bug this surfaced: wget's `-D` is port-blind, so a loopback asset host fell
+inside one side's scope and outside the other's, inflating the difference count.
+Snapshots are now restricted to the target origin before comparison. Inconsistent
+scoping silently corrupts the exact number we would put in front of a client.
+
+No live deployment of the example repos was reachable from this sandbox, so
+parity was proven against two local origins rather than a real production host.
+The mechanism is origin-agnostic; a client run needs only the URL and an
+`OWNERSHIP` attestation.
+
 ## What is proven, and what is not
 
 **Proven:** static and Next.js imports, source-derived routing, full audit
@@ -100,12 +143,13 @@ a time; nothing yet correlates them.
 
 ## Conclusions from the first run
 
-1. **The fixture only tested presence, never absence.** Three separate phases
-   died on real systems because the fixture always had a WebSocket, always had
-   query parameters, always had an API call. `grep`/`rg` exit 1 on no matches,
-   and under `pipefail` that killed the phase on the most common real-world
-   outcome. The fixture needs negative cases: a site with no third parties, no
-   query strings, no dynamic endpoints.
+1. **The fixture only tested presence, never absence.** ~~The fixture needs
+   negative cases.~~ **Done** — `fixture/bare` now covers the empty result, and
+   `bin/verify-engine.sh` runs both fixtures as one regression. Building it
+   immediately exposed two more bugs of the same family: `<sitemapindex>` was
+   matched inside an XML *comment*, so a flat sitemap was expanded as an index;
+   and phase 3 hard-failed a site with no JavaScript, which is a legitimate
+   brochure site rather than a broken mirror. Five bugs total in this class.
 2. **Import is faster than expected and is not the bottleneck.** 26 s for a
    full Next.js install+build. The audit is the slow half (2 m 12 s for 18
    routes), and it is dominated by the politeness delay — which is unnecessary
