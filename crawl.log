@@ -1,0 +1,6 @@
+OK   200  http://localhost:8080/index.html
+OK   200  http://localhost:8080/markets.html
+OK   200  http://localhost:8080/products.html
+OK   200  http://localhost:8080/about.html
+OK   200  http://localhost:8080/contact.html
+OK   200  http://localhost:8080/blog/why-custody-matters.html
