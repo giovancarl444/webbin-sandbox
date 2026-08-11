@@ -1,0 +1,26 @@
+# Answer key for the local fixture. bin/verify-fixture.sh asserts that every
+# row below is actually detected by the pipeline.
+#
+# This is the point of the fixture: a clean run against a real site proves
+# nothing about whether the detectors work. Planting known defects and
+# requiring the scanners to find them is the only way to distinguish
+# "the site is clean" from "the scanner is broken".
+#
+# Columns: id <TAB> findings-file <TAB> string-that-must-appear <TAB> description
+SM-01	findings/sourcemaps.md	app.bundle.js.map	Publicly reachable sourcemap reconstructs original source
+SEC-01	findings/secrets.md	AKIAIOSF	AWS access key id in a shipped bundle
+SEC-02	findings/secrets.md	sk_test_	Stripe test key in a shipped bundle
+SEC-03	findings/secrets.md	eyJhbGci	JWT embedded in client config
+SEC-04	findings/secrets.md	CG-FIXTUR	CoinGecko market-data API key (fintech pattern pack)
+FP-01	findings/secrets.md	pk_live_	Publishable key present and triaged as NOT a secret
+DEP-01	findings/dependencies.md	jquery	Known-vulnerable jQuery 1.8.3 detected by retire.js
+HDR-01	findings/headers.md	Content-Security-Policy	CSP absent on root
+HDR-02	findings/headers.md	Strict-Transport-Security	HSTS absent on root
+HDR-03	findings/headers.md	X-Content-Type-Options	nosniff absent on root
+TP-01	findings/third-party.md	127.0.0.1:8081	Cross-origin asset host inventoried from HARs
+SRI-01	findings/sri-csp.md	widget.js	Cross-origin script loaded without subresource integrity
+SINK-01	findings/dom-sinks.md	innerHTML	Unsafe DOM sink present in first-party JS
+ERR-01	findings/errors.md	fixture-intentional-error	JS console error captured during rendered crawl
+ERR-02	findings/errors.md	/api/missing-endpoint.json	4xx network failure captured from HAR
+API-01	api-surface.txt	/api/quotes.json	XHR endpoint captured for backend handoff
+API-02	api-surface.txt	WS	WebSocket endpoint captured (price-feed pattern)

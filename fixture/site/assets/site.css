@@ -1,0 +1,10 @@
+:root { --fg: #14181f; --bg: #ffffff; --accent: #1f6feb; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.55 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+header { display: flex; gap: 1.5rem; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #e4e8ee; }
+header a { color: var(--fg); text-decoration: none; }
+nav { display: flex; gap: 1rem; }
+main { max-width: 62rem; margin: 0 auto; padding: 2rem; }
+h1 { font-size: 1.9rem; letter-spacing: -0.02em; }
+#ticker { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; font-variant-numeric: tabular-nums; }
+.row { padding: 0.4rem 0.7rem; border: 1px solid #e4e8ee; border-radius: 6px; }

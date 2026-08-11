@@ -1,0 +1,29 @@
+# ---------------------------------------------------------------------------
+# Captured audit artifacts. NEVER commit these.
+#
+# This repo is PUBLIC. A mirror of a client site can contain live credentials,
+# proprietary source (via sourcemaps), and client-confidential content.
+# Committing it converts a needle-in-a-haystack exposure into an indexed,
+# cloneable, permanent one. These entries exist before the first `git add`
+# for exactly that reason -- git history is append-only, so an artifact
+# committed once cannot be un-shipped by ignoring it later.
+# ---------------------------------------------------------------------------
+mirror-raw/
+rendered/
+har/
+sourcemaps/
+*.har
+
+# Raw (unredacted) scanner output. Redacted derivatives in findings/ are safe;
+# these are not.
+.audit-raw/
+findings/*.raw
+findings/retire.json
+
+# Generated fixture credentials. Synthetic, but credential-shaped -- keeping
+# them out of history avoids tripping secret-scanning push protection and
+# avoids adding 8 fake keys to the world's grep corpus.
+fixture/site/assets/config.gen.js
+
+node_modules/
+.DS_Store

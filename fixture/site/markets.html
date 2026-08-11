@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Markets — Meridian Capital</title>
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<header><a href="/">Meridian Capital</a></header>
+<main>
+  <h1>Markets</h1>
+  <!-- Faceted/paginated links. Without a reject-regex these permutations
+       generate a near-infinite crawl of the same page. -->
+  <ul>
+    <li><a href="/markets.html?sort_by=volume">Sort by volume</a></li>
+    <li><a href="/markets.html?sort_by=price">Sort by price</a></li>
+    <li><a href="/markets.html?sort_by=change">Sort by change</a></li>
+    <li><a href="/markets.html?filter.asset=btc">Filter BTC</a></li>
+    <li><a href="/markets.html?filter.asset=eth">Filter ETH</a></li>
+    <li><a href="/markets.html?page=2">Page 2</a></li>
+    <li><a href="/markets.html?page=3">Page 3</a></li>
+    <li><a href="/markets.html?variant=compact">Compact view</a></li>
+  </ul>
+  <div id="ticker">loading quotes&hellip;</div>
+</main>
+<script src="/assets/config.gen.js"></script>
+<script src="/assets/app.bundle.js"></script>
+</body>
+</html>

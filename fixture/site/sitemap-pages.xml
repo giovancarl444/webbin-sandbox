@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost:8080/index.html</loc></url>
+  <url><loc>http://localhost:8080/markets.html</loc></url>
+  <url><loc>http://localhost:8080/products.html</loc></url>
+  <url><loc>http://localhost:8080/about.html</loc></url>
+  <url><loc>http://localhost:8080/contact.html</loc></url>
+</urlset>

@@ -1,0 +1,14 @@
+{
+  "name": "webbin-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Passive frontend security and quality audit pipeline.",
+  "scripts": {
+    "audit": "./bin/run-audit.sh",
+    "audit:fixture": "AUDIT_ENV=fixture/fixture.env ./bin/run-audit.sh"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1",
+    "retire": "^5.2.7"
+  }
+}
