@@ -1,0 +1,12 @@
+97d58ef745c9cb435a730a6e6047608e208e0185ae3ee3277b9f5ccf53b8cf14  mirror-raw/127.0.0.1:8081/widget.js
+821a80690692ea7625f60ea4f0c83e7426b7d7baec51cda61f8a17364d32b1df  mirror-raw/localhost:8080/about.html
+d9b790a06eb5095e89abf71c54e7d460432319dc996b6e40e80ba61ac415db34  mirror-raw/localhost:8080/assets/app.bundle.js
+439a47f798b03f6ff9f19e26bb41a8177ecc6c3f451ea0453eae256b3d57f157  mirror-raw/localhost:8080/assets/config.gen.js
+e7ef34c38f44e8f3d59668eda01851066597e6f5df261daf59777b04d93be388  mirror-raw/localhost:8080/assets/jquery-1.8.3.min.js
+e05db25666ddf3da3f8c9cb936f1804b82b32bcc2e5cee5ae2208ad2eefd96ff  mirror-raw/localhost:8080/assets/site.css
+83d2f7662c6d26e8f99557299da2fb914a94513adbcf258baccf053e4620dce5  mirror-raw/localhost:8080/blog/why-custody-matters.html
+512e3592df18e349b94f7bfc02289842751020964ce7acdfeda9829024b9070e  mirror-raw/localhost:8080/contact.html
+7767a3a2b4f98298d7051e3f19e518915828a4031dfbd822f7fec40c6c806458  mirror-raw/localhost:8080/index.html
+7f05d0d53d9181f038f1c06fc3089cc11cec191b7354bd39019cbe1f9c23c1b9  mirror-raw/localhost:8080/markets.html
+642d754305e2c5f1c1d8030078e7afc2a6ebed4df10069f6bcd4c621812016fd  mirror-raw/localhost:8080/products.html
+ab1670d880711e4064655711cc409298ea333b6872e530bdf7651100580ff422  mirror-raw/localhost:8080/robots.txt
